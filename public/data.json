@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1",
+    "title": "Вечеринка выпускников",
+    "icon": "users",
+    "color": "red",
+    "responses": 13,
+    "lastUpdated": "2 дня назад"
+  },
+  {
+    "id": "2",
+    "title": "Открытый микрофон",
+    "icon": "mic",
+    "color": "orange",
+    "responses": 8,
+    "lastUpdated": "4 часа назад"
+  },
+  {
+    "id": "3",
+    "title": "Лекция по дизайну",
+    "icon": "book-open",
+    "color": "red",
+    "responses": 5,
+    "lastUpdated": "6 минут назад"
+  }
+]

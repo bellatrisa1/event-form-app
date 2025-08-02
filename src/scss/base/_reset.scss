@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $font-family;
+  color: $gray-900;
+  background-color: $gray-100;
+  max-width: 100%;
+  overflow-x: hidden;
+}
