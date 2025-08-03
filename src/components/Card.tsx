@@ -10,12 +10,14 @@ interface CardProps {
   onEdit?: () => void;
   onAnalyze?: () => void;
   onClone?: () => void;
+  onDelete?: () => void; // ✅ Added
 }
 
 const iconMap: Record<string, LucideIcon> = {
   users: Users,
   mic: Mic,
   "book-open": BookOpen,
+  calendar: Calendar,
   default: Calendar,
 };
 
@@ -24,6 +26,7 @@ const colorClasses: Record<string, string> = {
   purple: "bg-purple-100 text-purple-600",
   blue: "bg-blue-100 text-blue-600",
   green: "bg-green-100 text-green-600",
+  red: "bg-red-100 text-red-600",
 };
 
 function Card({
@@ -35,6 +38,7 @@ function Card({
   onEdit,
   onAnalyze,
   onClone,
+  onDelete,
 }: CardProps) {
   const IconComponent = iconMap[icon] || iconMap.default;
   const colorClass = colorClasses[color] || colorClasses.orange;
@@ -47,14 +51,13 @@ function Card({
         </div>
         <span className="card-title font-medium text-gray-900">{title}</span>
       </div>
-
       <div className="card-meta text-sm text-gray-500 mb-4">
         {responses} ответов • обновлено: {lastUpdated}
       </div>
-
       <div className="card-actions flex gap-2">
         {onEdit && (
-          <button 
+          <button
+            type="button"
             onClick={onEdit}
             className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
           >
@@ -75,9 +78,9 @@ function Card({
             Редактировать
           </button>
         )}
-
         {onAnalyze && (
           <button
+            type="button"
             onClick={onAnalyze}
             className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
           >
@@ -100,9 +103,9 @@ function Card({
             Аналитика
           </button>
         )}
-
         {onClone && (
           <button
+            type="button"
             onClick={onClone}
             className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
           >
@@ -121,6 +124,32 @@ function Card({
               <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
             </svg>
             Клонировать
+          </button>
+        )}
+        {onDelete && (
+          <button
+            type="button"
+            onClick={onDelete}
+            className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-700 hover:bg-red-200"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+            Удалить
           </button>
         )}
       </div>

@@ -4,6 +4,7 @@ import {
   addDoc,
   doc,
   updateDoc,
+  deleteDoc,
   serverTimestamp,
 } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -25,20 +26,12 @@ export const createForm = async (
   const docRef = await addDoc(collection(db, "forms"), {
     ...formData,
     createdAt: serverTimestamp(),
+    lastUpdated: serverTimestamp(),
   });
   return { id: docRef.id, ...formData } as FormItem;
 };
 
-// Получение всех регистраций
-export const fetchRegistrations = async (): Promise<any[]> => {
-  const snapshot = await getDocs(collection(db, "registrations"));
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-}; // ✅ Вот здесь была пропущена закрывающая скобка
-
-// Обновление формы по ID
+// Обновление формы
 export const updateForm = async (
   formId: string,
   formData: Partial<Omit<FormItem, "id" | "date" | "submissions">>
@@ -48,4 +41,18 @@ export const updateForm = async (
     ...formData,
     lastUpdated: serverTimestamp(),
   });
+};
+
+// Удаление формы
+export const deleteForm = async (formId: string): Promise<void> => {
+  await deleteDoc(doc(db, "forms", formId));
+};
+
+// Получение всех регистраций
+export const fetchRegistrations = async (): Promise<any[]> => {
+  const snapshot = await getDocs(collection(db, "registrations"));
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
 };

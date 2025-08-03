@@ -25,23 +25,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("Auth state changed:", user);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
-
-      if (!user) {
-        navigate("/login");
-      }
     });
-
     return unsubscribe;
-  }, [navigate]);
+  }, []);
 
   const logout = async () => {
     try {
       await signOut(auth);
-      navigate("/login");
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -49,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider value={{ user, loading, logout }}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

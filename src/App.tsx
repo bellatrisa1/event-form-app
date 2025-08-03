@@ -21,6 +21,8 @@ import CreateForm from "./components/CreateForm";
 import RegistrationForm from "./components/RegistrationForm";
 import EditForm from "./components/EditForm";
 import FormAnalytics from "./components/FormAnalytics";
+import Register from "./components/Register";
+import ForgotPassword from "./components/ForgotPassword";
 import Login from "./components/Login";
 import { useAuth } from "./context/AuthContext";
 import { fetchForms } from "./api/formApi";
@@ -28,10 +30,13 @@ import { FormItem } from "./types";
 import { seedForms } from "./utils/seedDatabase";
 import "./scss/main.scss";
 
+// 🔹 Define SortOption type here to fix the string vs union issue
+type SortOption = "date" | "alphabet" | "submissions";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 минут
+      staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 1,
     },
   },
@@ -67,8 +72,10 @@ function AppWithProviders() {
 function Dashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
+
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState<string>("date");
+  // ✅ Fixed: Use SortOption union type, not string
+  const [sortOption, setSortOption] = useState<SortOption>("date");
 
   const {
     data: forms = [],
@@ -229,6 +236,8 @@ function App() {
         }
       />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   );
 }

@@ -1,26 +1,18 @@
 [
   {
-    "id": "1",
+    "id": "form1",
     "title": "Вечеринка выпускников",
     "icon": "users",
-    "color": "red",
-    "responses": 13,
-    "lastUpdated": "2 дня назад"
-  },
-  {
-    "id": "2",
-    "title": "Открытый микрофон",
-    "icon": "mic",
     "color": "orange",
-    "responses": 8,
-    "lastUpdated": "4 часа назад"
+    "responses": 24,
+    "lastUpdated": "Только что"
   },
   {
-    "id": "3",
-    "title": "Лекция по дизайну",
-    "icon": "book-open",
-    "color": "red",
-    "responses": 5,
-    "lastUpdated": "6 минут назад"
+    "id": "form2",
+    "title": "Конференция по технологиям",
+    "icon": "mic",
+    "color": "purple",
+    "responses": 42,
+    "lastUpdated": "1 час назад"
   }
 ]
