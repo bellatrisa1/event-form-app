@@ -2,61 +2,80 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
-import { FormItem } from "../types";
+import { FormItem, RegistrationItem } from "../types/index";
+import { fetchRegistrations } from "../api/formApi";
 import Chart from "chart.js/auto";
+import { ChartConfiguration } from "chart.js";
 
 const FormAnalytics: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [form, setForm] = useState<FormItem | null>(null);
+  const [registrations, setRegistrations] = useState<RegistrationItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const chartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
-    const loadForm = async () => {
-      if (!id) return;
+    const loadData = async () => {
+      if (!id) {
+        setError("ID формы не указан.");
+        setLoading(false);
+        return;
+      }
+
       try {
         const formRef = doc(db, "forms", id);
         const formSnap = await getDoc(formRef);
         if (formSnap.exists()) {
           setForm({ id: formSnap.id, ...formSnap.data() } as FormItem);
+        } else {
+          setError("Форма не найдена.");
         }
+
+        const regs = await fetchRegistrations();
+        setRegistrations(regs.filter((reg) => reg.formId === id));
       } catch (err) {
-        console.error("Ошибка загрузки формы:", err);
+        setError("Ошибка загрузки данных: " + (err as Error).message);
       } finally {
         setLoading(false);
       }
     };
 
-    loadForm();
+    loadData();
   }, [id]);
 
-  // Простой график — количество регистраций (в реальности можно брать из `registrations`)
   useEffect(() => {
-    if (!chartRef.current || !form) return;
+    if (!chartRef.current || !form || !registrations.length) return;
 
     const ctx = chartRef.current.getContext("2d");
     if (!ctx) return;
-
-    // Имитация данных (в будущем — реальные данные из Firestore)
-    const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
-    const data = Array(7)
-      .fill(0)
-      .map(() => Math.floor(Math.random() * 5));
 
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
 
-    chartInstance.current = new Chart(ctx, {
+    // Группировка регистраций по дням
+    const registrationCounts = registrations.reduce((acc, reg) => {
+      const date = reg.submittedAt
+        ? new Date(reg.submittedAt).toLocaleDateString("ru-RU")
+        : "Unknown";
+      acc[date] = (acc[date] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const labels = Object.keys(registrationCounts);
+    const data = Object.values(registrationCounts);
+
+    const config: ChartConfiguration<"bar"> = {
       type: "bar",
       data: {
-        labels: days,
+        labels,
         datasets: [
           {
             label: "Регистрации",
-            data: data,
+            data,
             backgroundColor: "rgba(124, 58, 237, 0.6)",
             borderColor: "#7C3AED",
             borderWidth: 1,
@@ -66,20 +85,38 @@ const FormAnalytics: React.FC = () => {
       options: {
         responsive: true,
         scales: {
-          y: { beginAtZero: true },
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: "Количество" },
+          },
+          x: { title: { display: true, text: "Дата" } },
         },
       },
-    });
+    };
+
+    chartInstance.current = new Chart(ctx, config);
 
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
       }
     };
-  }, [form]);
+  }, [form, registrations]);
 
   if (loading) return <div className="container">Загрузка...</div>;
-  if (!form) return <div className="container">Форма не найдена</div>;
+  if (error || !form) {
+    return (
+      <div className="container">
+        <div className="error">{error || "Форма не найдена"}</div>
+        <button
+          className="secondary-button"
+          onClick={() => window.history.back()}
+        >
+          Назад
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
@@ -104,7 +141,7 @@ const FormAnalytics: React.FC = () => {
 
       <div className="chart-container" style={{ marginTop: "2rem" }}>
         <div className="chart-header">
-          <span>Динамика регистраций (пример)</span>
+          <span>Динамика регистраций</span>
         </div>
         <div className="chart-wrapper">
           <canvas ref={chartRef} />

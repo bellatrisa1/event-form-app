@@ -1,5 +1,4 @@
-// src/App.tsx
-import React, { JSX, useState } from "react";
+import React, { JSX } from "react";
 import {
   Routes,
   Route,
@@ -7,11 +6,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query"; // Добавьте импорт
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Sort from "./components/Sort";
@@ -23,26 +18,14 @@ import EditForm from "./components/EditForm";
 import FormAnalytics from "./components/FormAnalytics";
 import Register from "./components/Register";
 import ForgotPassword from "./components/ForgotPassword";
+import Profile from "./components/Profile";
 import Login from "./components/Login";
 import { useAuth } from "./context/AuthContext";
-import { fetchForms } from "./api/formApi";
-import { FormItem } from "./types";
 import { seedForms } from "./utils/seedDatabase";
+import { useForms } from "./hooks/useForms";
 import "./scss/main.scss";
 
-// 🔹 Define SortOption type here to fix the string vs union issue
-type SortOption = "date" | "alphabet" | "submissions";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
-});
-
-const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
+function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -59,38 +42,28 @@ const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   }
 
   return children;
-};
-
-function AppWithProviders() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  );
 }
 
 function Dashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
-
-  const [searchTerm, setSearchTerm] = useState("");
-  // ✅ Fixed: Use SortOption union type, not string
-  const [sortOption, setSortOption] = useState<SortOption>("date");
-
+  const queryClient = useQueryClient(); // Используйте хук
   const {
-    data: forms = [],
+    forms,
     isLoading,
     error,
-    refetch,
-  } = useQuery<FormItem[]>({
-    queryKey: ["forms"],
-    queryFn: fetchForms,
-  });
+    searchTerm,
+    setSearchTerm,
+    sortOption,
+    setSortOption,
+    handleClone,
+    handleDelete,
+  } = useForms();
 
   const handleSeedDatabase = async () => {
     try {
       await seedForms();
-      await refetch();
+      await queryClient.invalidateQueries({ queryKey: ["forms"] });
     } catch (err) {
       console.error("Seed error:", err);
     }
@@ -106,10 +79,6 @@ function Dashboard() {
 
   const handleAnalyze = (formId: string) => {
     navigate(`/analytics/${formId}`);
-  };
-
-  const handleClone = (formId: string) => {
-    console.log("Clone form:", formId);
   };
 
   if (isLoading) {
@@ -134,21 +103,6 @@ function Dashboard() {
     );
   }
 
-  const filteredForms = forms.filter((form) =>
-    form.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const sortedForms = [...filteredForms].sort((a, b) => {
-    if (sortOption === "date") {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
-    } else if (sortOption === "alphabet") {
-      return a.title.localeCompare(b.title);
-    } else if (sortOption === "submissions") {
-      return b.submissions - a.submissions;
-    }
-    return 0;
-  });
-
   return (
     <div className="app-container">
       <Sidebar />
@@ -170,11 +124,11 @@ function Dashboard() {
           <Sort
             onSortChange={setSortOption}
             selectedSort={sortOption}
-            totalForms={sortedForms.length}
+            totalForms={forms.length}
           />
           <div className="forms-grid">
-            {sortedForms.length > 0 ? (
-              sortedForms.map((form) => (
+            {forms.length > 0 ? (
+              forms.map((form) => (
                 <Card
                   key={form.id}
                   title={form.title}
@@ -185,13 +139,14 @@ function Dashboard() {
                   onEdit={() => handleEdit(form.id)}
                   onAnalyze={() => handleAnalyze(form.id)}
                   onClone={() => handleClone(form.id)}
+                  onDelete={() => handleDelete(form.id)}
                 />
               ))
             ) : (
               <p>Формы не найдены</p>
             )}
           </div>
-          <Analytics forms={sortedForms} />
+          <Analytics forms={forms} />
         </section>
       </main>
     </div>
@@ -202,6 +157,8 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route
         path="/create"
         element={
@@ -235,11 +192,17 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
     </Routes>
   );
 }
 
-export default AppWithProviders;
+export default App;

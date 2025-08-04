@@ -1,11 +1,8 @@
-// src/components/Sort.tsx
 import React from "react";
 
-type SortOption = "date" | "alphabet" | "submissions";
-
 interface SortProps {
-  onSortChange: (option: SortOption) => void;
-  selectedSort: SortOption;
+  onSortChange: (option: string) => void;
+  selectedSort: string;
   totalForms: number;
 }
 
@@ -20,7 +17,7 @@ function Sort({ onSortChange, selectedSort, totalForms }: SortProps) {
         <select
           id="sort"
           value={selectedSort}
-          onChange={(e) => onSortChange(e.target.value as SortOption)}
+          onChange={(e) => onSortChange(e.target.value)}
         >
           <option value="date">По дате</option>
           <option value="alphabet">По алфавиту</option>

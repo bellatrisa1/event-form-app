@@ -1,26 +1,11 @@
-// src/components/EditForm.tsx
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
-import { FormItem } from "../types";
+import { FormItem } from "../types/index";
 import { updateForm } from "../api/formApi";
 import { useQueryClient } from "@tanstack/react-query";
-
-const ICON_OPTIONS = [
-  { value: "users", label: "Участники", icon: "👥" },
-  { value: "mic", label: "Микрофон", icon: "🎤" },
-  { value: "book-open", label: "Лекция", icon: "📖" },
-  { value: "calendar", label: "Календарь", icon: "📅" },
-] as const;
-
-const COLOR_OPTIONS = [
-  { value: "orange", label: "Оранжевый", color: "#FFEDD5" },
-  { value: "purple", label: "Фиолетовый", color: "#EEF2FF" },
-  { value: "blue", label: "Синий", color: "#EFF6FF" },
-  { value: "green", label: "Зелёный", color: "#ECFCCB" },
-  { value: "red", label: "Красный", color: "#FEE2E2" },
-] as const;
+import { ICON_OPTIONS, COLOR_OPTIONS } from "../constants/options";
 
 const EditForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -38,7 +23,11 @@ const EditForm: React.FC = () => {
 
   useEffect(() => {
     const loadForm = async () => {
-      if (!id) return;
+      if (!id) {
+        setError("ID формы не указан.");
+        setLoading(false);
+        return;
+      }
       try {
         const formRef = doc(db, "forms", id);
         const formSnap = await getDoc(formRef);
@@ -75,6 +64,10 @@ const EditForm: React.FC = () => {
       setError("Введите название формы.");
       return;
     }
+    if (form.title.length > 50) {
+      setError("Название формы не должно превышать 50 символов.");
+      return;
+    }
 
     if (!id) return;
 
@@ -99,6 +92,20 @@ const EditForm: React.FC = () => {
     return <div className="container">Загрузка формы...</div>;
   }
 
+  if (error) {
+    return (
+      <div className="container">
+        <div className="error">{error}</div>
+        <button
+          className="secondary-button"
+          onClick={() => navigate("/dashboard")}
+        >
+          Назад
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="container">
       <h1>Редактировать форму</h1>
@@ -112,6 +119,7 @@ const EditForm: React.FC = () => {
             onChange={handleChange}
             placeholder="Название формы"
             maxLength={50}
+            aria-required="true"
           />
         </div>
 
@@ -137,6 +145,7 @@ const EditForm: React.FC = () => {
                   value={c.value}
                   checked={form.color === c.value}
                   onChange={handleChange}
+                  className="sr-only"
                 />
                 <span
                   style={{
@@ -146,6 +155,7 @@ const EditForm: React.FC = () => {
                     borderRadius: 4,
                   }}
                 ></span>
+                {c.label}
               </label>
             ))}
           </div>
@@ -158,6 +168,7 @@ const EditForm: React.FC = () => {
             type="submit"
             className="primary-button"
             disabled={isSubmitting}
+            aria-label="Сохранить форму"
           >
             {isSubmitting ? "Сохранение..." : "Сохранить"}
           </button>
@@ -166,6 +177,7 @@ const EditForm: React.FC = () => {
             className="secondary-button"
             onClick={() => navigate("/dashboard")}
             disabled={isSubmitting}
+            aria-label="Отмена"
           >
             Отмена
           </button>

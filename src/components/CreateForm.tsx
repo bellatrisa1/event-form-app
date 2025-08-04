@@ -1,24 +1,8 @@
-// src/components/CreateForm.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { createForm } from "../api/formApi";
 import { FormItem } from "../types";
-
-const ICON_OPTIONS = [
-  { value: "users", label: "Пользователи", icon: "👥" },
-  { value: "mic", label: "Микрофон", icon: "🎤" },
-  { value: "book-open", label: "Лекция", icon: "📖" },
-  { value: "calendar", label: "Календарь", icon: "📅" },
-] as const;
-
-const COLOR_OPTIONS = [
-  { value: "orange", label: "Оранжевый", color: "#FFEDD5" },
-  { value: "purple", label: "Фиолетовый", color: "#EEF2FF" },
-  { value: "blue", label: "Синий", color: "#EFF6FF" },
-  { value: "green", label: "Зелёный", color: "#ECFCCB" },
-  { value: "red", label: "Красный", color: "#FEE2E2" },
-] as const;
+import { ICON_OPTIONS, COLOR_OPTIONS } from "../constants/options";
 
 interface FormData {
   title: string;
@@ -54,29 +38,29 @@ const CreateForm: React.FC = () => {
       setError("Введите название формы.");
       return;
     }
+    if (formData.title.length > 50) {
+      setError("Название формы не должно превышать 50 символов.");
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
-      const newForm: Omit<FormItem, "id"> = {
+      const newForm: Omit<FormItem, "id" | "createdAt"> = {
         title: formData.title.trim(),
         date: new Date().toISOString(),
         submissions: 0,
-        lastUpdated: "Только что",
+        lastUpdated: new Date().toISOString(),
         icon: formData.icon,
         color: formData.color,
       };
 
-      await addDoc(collection(db, "forms"), {
-        ...newForm,
-        createdAt: serverTimestamp(),
-        lastUpdated: serverTimestamp(),
-      });
-
+      await createForm(newForm);
       setSuccess("Форма успешно создана!");
       setTimeout(() => navigate("/dashboard"), 1500);
     } catch (err) {
       setError("Ошибка при создании формы: " + (err as Error).message);
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -95,6 +79,7 @@ const CreateForm: React.FC = () => {
             onChange={handleChange}
             placeholder="Например: Вечеринка выпускников"
             maxLength={50}
+            aria-required="true"
           />
         </div>
 
@@ -153,6 +138,7 @@ const CreateForm: React.FC = () => {
             type="submit"
             className="primary-button"
             disabled={isSubmitting}
+            aria-label="Создать форму"
           >
             {isSubmitting ? "Создание..." : "Создать форму"}
           </button>
@@ -161,6 +147,7 @@ const CreateForm: React.FC = () => {
             className="secondary-button"
             onClick={() => navigate("/dashboard")}
             disabled={isSubmitting}
+            aria-label="Отмена"
           >
             Отмена
           </button>

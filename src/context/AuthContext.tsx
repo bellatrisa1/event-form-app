@@ -26,16 +26,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", {
+        user,
+        pathname: window.location.pathname,
+      });
       setUser(user);
       setLoading(false);
+      if (user) {
+        navigate("/dashboard");
+      } else if (
+        window.location.pathname !== "/login" &&
+        window.location.pathname !== "/register" &&
+        window.location.pathname !== "/forgot-password"
+      ) {
+        navigate("/login");
+      }
     });
-    return unsubscribe;
-  }, []);
+
+    return () => unsubscribe();
+  }, [navigate]);
 
   const logout = async () => {
     try {
       await signOut(auth);
-      navigate("/login", { replace: true });
+      navigate("/login");
     } catch (error) {
       console.error("Logout error:", error);
     }
@@ -43,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider value={{ user, loading, logout }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

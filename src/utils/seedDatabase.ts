@@ -1,38 +1,48 @@
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { FormItem } from "../types";
 
-interface JsonForm {
-  id: string;
-  title: string;
-  icon: string;
-  color: string;
-  responses: number;
-  lastUpdated: string;
-}
-
 export const seedForms = async () => {
+  const forms: Omit<FormItem, "id">[] = [
+    {
+      title: "Вечеринка выпускников",
+      date: new Date().toISOString(),
+      submissions: 10,
+      lastUpdated: new Date().toISOString(),
+      icon: "users",
+      color: "orange",
+      ownerId: "user123",
+      rating: 4.8,
+    },
+    {
+      title: "Конференция по IT",
+      date: new Date().toISOString(),
+      submissions: 5,
+      lastUpdated: new Date().toISOString(),
+      icon: "mic",
+      color: "purple",
+      ownerId: "user123",
+      rating: 4.8,
+    },
+    {
+      title: "Книжный клуб",
+      date: new Date().toISOString(),
+      submissions: 3,
+      lastUpdated: new Date().toISOString(),
+      icon: "book-open",
+      color: "blue",
+      ownerId: "user123",
+      rating: 4.8,
+    },
+  ];
+
   try {
-    const response = await fetch("/data.json");
-    if (!response.ok) {
-      throw new Error("Failed to fetch data.json");
+    for (const form of forms) {
+      await addDoc(collection(db, "forms"), form);
     }
-    const jsonData: JsonForm[] = await response.json();
-    for (const form of jsonData) {
-      const formData: FormItem = {
-        id: form.id,
-        title: form.title,
-        date: new Date().toISOString(),
-        submissions: form.responses,
-        lastUpdated: form.lastUpdated,
-        icon: form.icon,
-        color: form.color,
-      };
-      await setDoc(doc(collection(db, "forms"), form.id), formData);
-      console.log(`Form ${form.title} uploaded successfully`);
-    }
-    console.log("Database seeding completed");
+    console.log("База данных успешно заполнена!");
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error("Ошибка при заполнении базы данных:", error);
+    throw error;
   }
 };

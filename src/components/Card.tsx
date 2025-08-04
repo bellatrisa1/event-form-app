@@ -5,19 +5,18 @@ interface CardProps {
   title: string;
   responses: number;
   lastUpdated: string;
-  icon?: string;
-  color?: string;
+  icon?: keyof typeof iconMap;
+  color?: keyof typeof colorClasses;
   onEdit?: () => void;
   onAnalyze?: () => void;
+  onDelete?: () => void;
   onClone?: () => void;
-  onDelete?: () => void; // ✅ Added
 }
 
 const iconMap: Record<string, LucideIcon> = {
   users: Users,
   mic: Mic,
   "book-open": BookOpen,
-  calendar: Calendar,
   default: Calendar,
 };
 
@@ -26,10 +25,9 @@ const colorClasses: Record<string, string> = {
   purple: "bg-purple-100 text-purple-600",
   blue: "bg-blue-100 text-blue-600",
   green: "bg-green-100 text-green-600",
-  red: "bg-red-100 text-red-600",
 };
 
-function Card({
+const Card: React.FC<CardProps> = ({
   title,
   responses,
   lastUpdated,
@@ -37,9 +35,9 @@ function Card({
   color = "orange",
   onEdit,
   onAnalyze,
-  onClone,
   onDelete,
-}: CardProps) {
+  onClone,
+}) => {
   const IconComponent = iconMap[icon] || iconMap.default;
   const colorClass = colorClasses[color] || colorClasses.orange;
 
@@ -51,15 +49,17 @@ function Card({
         </div>
         <span className="card-title font-medium text-gray-900">{title}</span>
       </div>
+
       <div className="card-meta text-sm text-gray-500 mb-4">
         {responses} ответов • обновлено: {lastUpdated}
       </div>
+
       <div className="card-actions flex gap-2">
         {onEdit && (
           <button
-            type="button"
             onClick={onEdit}
             className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+            aria-label="Редактировать форму"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -80,9 +80,9 @@ function Card({
         )}
         {onAnalyze && (
           <button
-            type="button"
             onClick={onAnalyze}
             className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+            aria-label="Аналитика формы"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -105,9 +105,9 @@ function Card({
         )}
         {onClone && (
           <button
-            type="button"
             onClick={onClone}
             className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+            aria-label="Клонировать форму"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -128,9 +128,9 @@ function Card({
         )}
         {onDelete && (
           <button
-            type="button"
             onClick={onDelete}
             className="action-button flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-md bg-red-100 text-red-700 hover:bg-red-200"
+            aria-label="Удалить форму"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -144,10 +144,10 @@ function Card({
               strokeLinejoin="round"
             >
               <path d="M3 6h18"></path>
-              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
               <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
+              <path d="M3 6v14c0 1 1 2 2 2h14c1 0 2-1 2-2V6"></path>
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
             </svg>
             Удалить
           </button>
@@ -155,6 +155,6 @@ function Card({
       </div>
     </div>
   );
-}
+};
 
 export default Card;
