@@ -1,46 +1,53 @@
-# Getting Started with Create React App
+# 📅 Event Form App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Event Form App — это современное адаптивное веб-приложение для создания, управления и аналитики форм регистрации на мероприятия. Построено на основе React, TypeScript, Firebase и TanStack Query. Обеспечивает плавный пользовательский опыт с авторизацией, обновлением данных в реальном времени и интуитивно понятным интерфейсом.
 
-## Available Scripts
+## 🔗 Live Demo: https://event-form-app-two.vercel.app/login
 
-In the project directory, you can run:
+### 🛠️ СТЕК:
+  - **📦 Frontend** - React 19.1.1, TypeScript, React Router 7.7.1
+  - **🔁 State** - TanStack Query 5.84.1, React Context API
+  - **🔙 Backend** - Firebase 12.0.0 (Auth, Firestore)
+  - **🎨 Стилизация** - SCSS (модульные стили)
+  - **🧩 Иконки** - React Icons 4.10.1, Lucide React 0.526.0
+  - **📈 Charts:** - Chart.js 4.5.0
+  - **⚙️ Индикаторы загрузки (Loader UI)** - react-spinners ^0.17.0
+  - **🗓️ Работа с датами (форматирование, сравнение)** - date-fns ^4.1.0
 
-### `npm start`
+## 🚀 Возможности.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 🔐 1. Аутентификация пользователей.
+  - **Вход** / **Регистрация** — безопасная аутентификация через email и пароль с помощью Firebase.
+  - **Восстановление пароля** — сброс пароля через email.
+  - **Защищённые маршруты** — доступ к панели управления, созданию форм и аналитике только для авторизованных пользователей.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 📝 2. Управление формами.
+  - **Создание форм** — настройка форм с гибкими и динамическими полями.
+  - **Редактирование** — удобный интерфейс для изменения форм.
+  - **Клонирование** — дублирование форм для быстрой настройки повторяющихся мероприятий.
+  - **Удаление** — удаление форм с подтверждением.
+  - **Поиск и сортировка** — фильтрация по названию, сортировка по дате, заголовку или количеству ответов.
 
-### `npm test`
+### 📊 3. Панель управления.
+  - **Обзор форм** — сетка карточек с основными данными (название, количество ответов, дата обновления).
+  - **Интерактивные карточки** — действия: редактирование, аналитика, клонирование, удаление.
+  - **Визуализация** — просмотр трендов и статистики по отправленным формам.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 📈 4. Аналитика форм.
+  - **Инсайты** — подробная статистика по каждой форме: количество ответов, паттерны поведения.
+  - **Графики** — интерактивные диаграммы с использованием Chart.js.
 
-### `npm run build`
+### 📱 5. Адаптивный дизайн.
+  - **Поддержка всех устройств** — от ПК до смартфонов и планшетов.
+  - **Единый стиль** — современный внешний вид, стили на SCSS и аккуратная цветовая схема.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### ⚡ 6. Производительность и UX.
+  - **Обновления в реальном времени** — благодаря Firebase Firestore.
+  - **Управление состоянием** — эффективная загрузка и кэширование с помощью TanStack Query.
+  - **Плавность** — индикаторы загрузки и обработка ошибок обеспечивают качественный UX.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 👨‍💻 7. Удобство для разработчиков.
+  - **TypeScript** — строгая типизация для надёжного кода.
+  - **Модульная архитектура** — использование Context API (AuthContext) и кастомных хуков (useForms).
+  - **Гибкость** — легко масштабируется и расширяется.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
