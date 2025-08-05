@@ -39,10 +39,10 @@ function Sidebar() {
           <span className="logo-text">EventForms</span>
         </div>
         <nav className="navigation">
-          <Link to="/dashboard" className="nav-link active">
+          {/* <Link to="/" className="nav-link active">
             <List className="icon" /> Мои формы
-          </Link>
-          <Link to="/dashboard" className="nav-link">
+          </Link> */}
+          <Link to="/" className="nav-link">
             <BarChart className="icon" /> Аналитика
           </Link>
           <Link to="/profile" className="nav-link">

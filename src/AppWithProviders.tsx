@@ -1,4 +1,4 @@
-import React from "react"; // Добавьте этот импорт
+import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
@@ -7,7 +7,7 @@ import App from "./App";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 минут
+      staleTime: 1000 * 60 * 5,
       retry: 1,
     },
   },

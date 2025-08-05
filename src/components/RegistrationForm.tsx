@@ -83,7 +83,6 @@ const RegistrationForm: React.FC = () => {
         submittedAt: serverTimestamp(),
       });
 
-      // Обновляем количество регистраций
       const formRef = doc(db, "forms", id);
       await updateDoc(formRef, {
         submissions: form?.submissions ? form.submissions + 1 : 1,
@@ -109,10 +108,7 @@ const RegistrationForm: React.FC = () => {
     return (
       <div className="registration-container">
         <div className="container error">{error}</div>
-        <button
-          className="secondary-button"
-          onClick={() => navigate("/dashboard")}
-        >
+        <button className="secondary-button" onClick={() => navigate("/")}>
           Назад
         </button>
       </div>

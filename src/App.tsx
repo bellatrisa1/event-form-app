@@ -29,6 +29,14 @@ function ProtectedRoute({ children }: { children: JSX.Element }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
+
+  console.log("ProtectedRoute: ", {
+    user,
+    loading,
+    location: location.pathname,
+  });
+
+
   if (loading) {
     return (
       <div className="app-container">
@@ -185,22 +193,24 @@ function App() {
       />
       <Route path="/form/:id" element={<RegistrationForm />} />
       <Route
-        path="/dashboard"
+        path="/"
         element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
         }
       />
-      <Route
+      {/* <Route
         path="/profile"
         element={
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>
         }
-      />
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      /> */}
+      <Route path="/profile" element={<Profile />} />
+      
+      {/* <Route path="/" element={<Navigate to="/" replace />} /> */}
     </Routes>
   );
 }

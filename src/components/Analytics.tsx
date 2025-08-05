@@ -13,7 +13,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ forms }) => {
   const chartInstance = useRef<Chart | null>(null);
 
   const totalResponses = forms.reduce((sum, form) => sum + form.submissions, 0);
-  // Временное решение, пока нет данных для рейтинга
+
   const averageRating = forms.length
     ? forms.reduce((sum, form) => sum + (form.rating || 0), 0) / forms.length
     : 0;

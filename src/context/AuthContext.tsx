@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "../firebase/config";
 import { onAuthStateChanged, User, signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 interface AuthContextType {
   user: User | null;
@@ -23,33 +23,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       console.log("Auth state changed:", {
         user,
-        pathname: window.location.pathname,
+        pathname: location.pathname,
       });
       setUser(user);
       setLoading(false);
       if (user) {
-        navigate("/dashboard");
+        // Редирект на "/" только если текущий маршрут — публичный
+        if (
+          location.pathname === "/login" ||
+          location.pathname === "/register" ||
+          location.pathname === "/forgot-password"
+        ) {
+          navigate("/", { replace: true });
+        }
       } else if (
-        window.location.pathname !== "/login" &&
-        window.location.pathname !== "/register" &&
-        window.location.pathname !== "/forgot-password"
+        location.pathname !== "/login" &&
+        location.pathname !== "/register" &&
+        location.pathname !== "/forgot-password"
       ) {
-        navigate("/login");
+        navigate("/login", { replace: true });
       }
     });
 
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate, location]);
 
   const logout = async () => {
     try {
       await signOut(auth);
-      navigate("/login");
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Logout error:", error);
     }

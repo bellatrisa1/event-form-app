@@ -81,7 +81,7 @@ const EditForm: React.FC = () => {
         color: form.color,
       });
       await queryClient.invalidateQueries({ queryKey: ["forms"] });
-      navigate("/dashboard");
+      navigate("/");
     } catch (err) {
       setError("Ошибка сохранения: " + (err as Error).message);
       setIsSubmitting(false);
@@ -96,10 +96,7 @@ const EditForm: React.FC = () => {
     return (
       <div className="container">
         <div className="error">{error}</div>
-        <button
-          className="secondary-button"
-          onClick={() => navigate("/dashboard")}
-        >
+        <button className="secondary-button" onClick={() => navigate("/")}>
           Назад
         </button>
       </div>
@@ -175,7 +172,7 @@ const EditForm: React.FC = () => {
           <button
             type="button"
             className="secondary-button"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
             disabled={isSubmitting}
             aria-label="Отмена"
           >

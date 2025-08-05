@@ -1,8 +1,7 @@
-// src/components/Profile.tsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { updateProfile } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -10,6 +9,12 @@ const Profile: React.FC = () => {
   const [displayName, setDisplayName] = useState(user?.displayName || "");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+const location = useLocation();
+console.log("Profile component rendered:", {
+  user,
+  location: location.pathname,
+});
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +53,7 @@ const Profile: React.FC = () => {
           <button
             type="button"
             className="secondary-button"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
           >
             Назад
           </button>

@@ -57,7 +57,7 @@ const CreateForm: React.FC = () => {
 
       await createForm(newForm);
       setSuccess("Форма успешно создана!");
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => navigate("/"), 1500);
     } catch (err) {
       setError("Ошибка при создании формы: " + (err as Error).message);
     } finally {
@@ -145,7 +145,7 @@ const CreateForm: React.FC = () => {
           <button
             type="button"
             className="secondary-button"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/")}
             disabled={isSubmitting}
             aria-label="Отмена"
           >

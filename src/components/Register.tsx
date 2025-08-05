@@ -1,4 +1,3 @@
-// src/components/Register.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -15,7 +14,7 @@ const Register: React.FC = () => {
     e.preventDefault();
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/dashboard");
+      navigate("/");
     } catch (err: any) {
       setError(err.message || "Ошибка регистрации");
     }
